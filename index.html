@@ -280,6 +280,11 @@
     .tile.selected { outline: 3px solid var(--gold); outline-offset: -3px; }
     .tile.in-range { box-shadow: inset 0 0 0 4px rgba(128, 215, 219, 0.35); }
     .tile.can-attack { box-shadow: inset 0 0 0 4px rgba(223, 105, 99, 0.55); }
+    .tile.enemy-active {
+      outline: 3px solid var(--red);
+      outline-offset: -3px;
+      animation: enemyPulse 900ms ease-in-out infinite;
+    }
     .tile.escape { box-shadow: inset 0 -5px 0 rgba(140, 207, 126, 0.82); }
     .tile.escape::before {
       content: "";
@@ -630,6 +635,11 @@
       100% { transform: translateY(18px) rotate(82deg); opacity: 0.22; }
     }
 
+    @keyframes enemyPulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.45); }
+    }
+
     .battle-text {
       position: absolute;
       left: 12px;
@@ -661,7 +671,7 @@
     <header>
       <div>
         <h1>Voidsong</h1>
-        <p class="subtitle">v0.26.05.23.1400 - Dynamic Soundtrack. A space-fantasy tactical RPG prototype with army preparation, hired troop squads, class paths, relics, terrain, spells, cinematic clashes, and phase-aware music.</p>
+        <p class="subtitle">v0.26.05.23.1417 - Enemy March. A space-fantasy tactical RPG prototype with army preparation, hired troop squads, class paths, relics, terrain, spells, cinematic clashes, phase-aware music, and visible enemy turns.</p>
       </div>
       <div class="badge" id="phase">Player Phase</div>
     </header>
@@ -776,7 +786,7 @@
   </main>
 
   <script>
-    const VERSION = "v0.26.05.23.1400 - Dynamic Soundtrack";
+    const VERSION = "v0.26.05.23.1417 - Enemy March";
 
     const heroicTracks = [
       ["Phase Runner Neon", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/01_phase_runner_neon_genesis_rock_hifi.mp3"],
@@ -922,6 +932,8 @@
     let missionStarted = false;
     let battleOver = false;
     let turn = 1;
+    let activeEnemyId = null;
+    let enemyPhaseAnimating = false;
     let musicEnabled = false;
     let currentMusicPool = "heroic";
     let currentTrackIndex = 0;
@@ -1176,6 +1188,7 @@
           if (occupant) tile.appendChild(unitSprite(occupant));
 
           if (selected && selected.x === x && selected.y === y) tile.classList.add("selected");
+          if (occupant && occupant.id === activeEnemyId) tile.classList.add("enemy-active");
           if (selected && selected.side === "ally" && playerPhase && !battleOver && !selected.moved && !occupant && distance(selected, { x, y }) <= 3) tile.classList.add("in-range");
           if (selected && selected.side === "ally" && playerPhase && !battleOver && occupant && occupant.side === "enemy" && distance(selected, occupant) <= 1) tile.classList.add("can-attack");
 
@@ -1221,7 +1234,7 @@
     }
 
     function handleTile(x, y) {
-      if (!missionStarted || battleOver) return;
+      if (!missionStarted || battleOver || enemyPhaseAnimating) return;
       const occupant = unitAt(x, y);
       const selected = units.find(unit => unit.id === selectedId);
 
@@ -1337,6 +1350,8 @@
 
     function winMission(text) {
       battleOver = true;
+      activeEnemyId = null;
+      enemyPhaseAnimating = false;
       document.querySelector("#objective").textContent = "Victory: gate held";
       document.querySelector("#phase").textContent = "Mission Complete";
       addLog(text);
@@ -1344,6 +1359,8 @@
 
     function loseMission(text) {
       battleOver = true;
+      activeEnemyId = null;
+      enemyPhaseAnimating = false;
       document.querySelector("#objective").textContent = "Defeat";
       document.querySelector("#phase").textContent = "Mission Failed";
       addLog(text);
@@ -1352,23 +1369,36 @@
     function endTurn() {
       if (!missionStarted || battleOver || !playerPhase) return;
       playerPhase = false;
+      enemyPhaseAnimating = true;
       document.querySelector("#phase").textContent = "Enemy Phase";
       syncDynamicMusic("enemy");
       addLog("The Void Host surges forward.");
-      setTimeout(enemyTurn, 350);
+      setTimeout(() => enemyTurn(), 900);
     }
 
-    function enemyTurn() {
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function enemyTurn() {
       units.filter(unit => unit.side === "ally").forEach(unit => unit.guarding = false);
       const enemies = units.filter(unit => unit.side === "enemy" && unit.troops > 0);
       for (const enemy of enemies) {
         if (battleOver) break;
+        activeEnemyId = enemy.id;
+        selectedId = enemy.id;
+        renderMap();
+        addLog(`${enemy.name} prepares to act.`);
+        await sleep(850);
+
         const allies = units.filter(unit => unit.side === "ally" && unit.troops > 0);
         allies.sort((a, b) => distance(enemy, a) - distance(enemy, b));
         const target = allies[0];
         if (!target) continue;
         if (distance(enemy, target) <= 1) {
+          addLog(`${enemy.name} closes for battle with ${target.name}.`);
           attack(enemy, target);
+          await sleep(1450);
         } else {
           const pressureGate = turn >= 3 && enemy.id !== "vark";
           const goal = pressureGate ? nearestEscape(enemy) : target;
@@ -1380,10 +1410,14 @@
             enemy.x = next.x;
             enemy.y = next.y;
             addLog(`${enemy.name} moves through ${tileAt(enemy.x, enemy.y).name}.`);
+            renderMap();
+            await sleep(1000);
           }
         }
         checkWinLoss();
       }
+      activeEnemyId = null;
+      enemyPhaseAnimating = false;
       if (battleOver) {
         renderMap();
         return;
@@ -1490,6 +1524,8 @@
       playerPhase = true;
       relicFound = false;
       battleOver = false;
+      activeEnemyId = null;
+      enemyPhaseAnimating = false;
       turn = 1;
       log.innerHTML = "";
       document.querySelector("#phase").textContent = "Player Phase";

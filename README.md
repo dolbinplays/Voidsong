@@ -1,8 +1,8 @@
 # Voidsong Prototype
 
-v0.26.05.23.1400 - Dynamic Soundtrack
+v0.26.05.23.1417 - Enemy March
 
-A single-file browser prototype for a space-fantasy tactical RPG inspired by the Sega Genesis era: army preparation, commanders, hired troop squads, class paths, terrain bonuses, rock-paper-scissors matchups, spells, equipment bonuses, phase-aware music, and side-view battle charges.
+A single-file browser prototype for a space-fantasy tactical RPG inspired by the Sega Genesis era: army preparation, commanders, hired troop squads, class paths, terrain bonuses, rock-paper-scissors matchups, spells, equipment bonuses, phase-aware music, visible enemy turns, and side-view battle charges.
 
 ## Run Locally
 
@@ -25,6 +25,7 @@ Open `index.html` in a browser.
 - The soundtrack is extracted under `assets/music/Soundtrack`.
 - All 20 heroic Genesis rock tracks are available for player-side moments.
 - All 10 evil ominous Genesis rock tracks are available for enemy phase and bad-guy pressure.
+- Enemy phase now resolves one unit at a time with map highlights, pauses, movement beats, and attack beats.
 - The player wins by surviving 6 turns or routing Lord Varkos.
 - The player loses if Prince Cael is routed or an enemy reaches the western escape gate.
 - Deployment lets each commander choose a troop squad and relic before the mission starts.
