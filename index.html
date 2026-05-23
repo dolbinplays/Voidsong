@@ -506,6 +506,10 @@
     .squad.right { right: 34px; transform: scaleX(-1); }
     .squad.left.charge { transform: translateX(270px); }
     .squad.right.charge { transform: translateX(-270px) scaleX(-1); }
+    .squad.left.lunge { transform: translateX(315px) translateY(-14px); }
+    .squad.right.lunge { transform: translateX(-315px) translateY(-14px) scaleX(-1); }
+    .squad.brace .soldier { transform: translateX(0) skewX(-7deg); }
+    .squad.volley .soldier { animation: volleyLean 620ms ease-out; }
 
     .soldier {
       position: absolute;
@@ -517,11 +521,7 @@
       clip-path: polygon(50% 0, 86% 25%, 100% 100%, 0 100%, 14% 25%);
     }
 
-    .soldier:nth-child(1) { left: 0; bottom: 0; }
-    .soldier:nth-child(2) { left: 28px; bottom: 12px; }
-    .soldier:nth-child(3) { left: 56px; bottom: 0; }
-    .soldier:nth-child(4) { left: 84px; bottom: 12px; }
-    .soldier:nth-child(5) { left: 112px; bottom: 0; }
+    .soldier { left: var(--x); bottom: var(--y); }
 
     .soldier::before {
       content: "";
@@ -544,6 +544,57 @@
       height: 30px;
       background: #d6d2c3;
       transform: rotate(-28deg);
+    }
+
+    .soldier.archers {
+      width: 20px;
+      height: 31px;
+      clip-path: polygon(50% 0, 76% 24%, 92% 100%, 8% 100%, 24% 24%);
+    }
+
+    .soldier.archers::after {
+      right: -10px;
+      top: 5px;
+      width: 17px;
+      height: 28px;
+      border: 3px solid #d6d2c3;
+      border-left: 0;
+      background: transparent;
+      border-radius: 0 50% 50% 0;
+      transform: rotate(-8deg);
+    }
+
+    .soldier.pikes::after {
+      right: -17px;
+      top: -7px;
+      height: 52px;
+      transform: rotate(-62deg);
+      background: #d6d2c3;
+      box-shadow: 18px -10px 0 -1px #d6d2c3;
+    }
+
+    .soldier.beasts {
+      width: 30px;
+      height: 24px;
+      border-radius: 45% 25% 35% 25%;
+      clip-path: polygon(8% 35%, 38% 0, 88% 14%, 100% 58%, 80% 100%, 18% 82%);
+    }
+
+    .soldier.beasts::before {
+      top: -7px;
+      left: 15px;
+      width: 13px;
+      height: 11px;
+      background: var(--unit2);
+    }
+
+    .soldier.beasts::after {
+      right: -8px;
+      top: 2px;
+      width: 16px;
+      height: 5px;
+      background: var(--unit2);
+      transform: rotate(24deg);
     }
 
     .soldier.fallen {
@@ -603,6 +654,19 @@
 
     .impact.flash { animation: flash 420ms ease-out; }
 
+    .projectile {
+      position: absolute;
+      left: 168px;
+      bottom: 118px;
+      width: 34px;
+      height: 3px;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent, #f6e6a6 38%, #fff);
+      box-shadow: 0 0 8px rgba(246,230,166,0.82);
+    }
+
+    .projectile.volley-shot { animation: arrowVolley 760ms ease-in; }
+
     .flying-glaive {
       position: absolute;
       left: 130px;
@@ -617,6 +681,45 @@
 
     .flying-glaive.fly { animation: glaive 850ms ease-in-out; }
 
+    .battle-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      min-width: 220px;
+      transform: translateX(-50%);
+      padding: 7px 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      background: rgba(7, 8, 10, 0.72);
+      color: #fff8df;
+      text-align: center;
+      text-shadow: 0 2px 0 #000;
+      z-index: 4;
+    }
+
+    .damage-pop {
+      position: absolute;
+      left: 50%;
+      top: 62px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+      z-index: 5;
+    }
+
+    .damage-pop.show { animation: damagePop 900ms ease-out; }
+
+    .damage-pop span {
+      padding: 5px 9px;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      background: rgba(10,11,14,0.82);
+      color: #fff8df;
+      font-weight: 700;
+      text-shadow: 0 2px 0 #000;
+    }
+
     @keyframes flash {
       0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
       40% { opacity: 1; transform: translate(-50%, -50%) scale(6); }
@@ -628,6 +731,24 @@
       15% { opacity: 1; }
       55% { opacity: 1; transform: translate(440px, -18px) rotate(2.3turn); }
       100% { opacity: 0; transform: translate(0, 0) rotate(4turn); }
+    }
+
+    @keyframes arrowVolley {
+      0% { opacity: 0; transform: translate(0, 0) rotate(-5deg); }
+      18% { opacity: 1; }
+      100% { opacity: 0; transform: translate(460px, -20px) rotate(-5deg); }
+    }
+
+    @keyframes volleyLean {
+      0%, 100% { transform: translateX(0); }
+      42% { transform: translateX(8px) skewX(-10deg); }
+    }
+
+    @keyframes damagePop {
+      0% { opacity: 0; transform: translate(-50%, 12px) scale(0.86); }
+      25% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -10px) scale(0.98); }
     }
 
     @keyframes fall {
@@ -671,7 +792,7 @@
     <header>
       <div>
         <h1>Voidsong</h1>
-        <p class="subtitle">v0.26.05.23.1417 - Enemy March. A space-fantasy tactical RPG prototype with army preparation, hired troop squads, class paths, relics, terrain, spells, cinematic clashes, phase-aware music, and visible enemy turns.</p>
+        <p class="subtitle">v0.26.05.23.1431 - Battle Theater. A space-fantasy tactical RPG prototype with army preparation, hired troop squads, class paths, relics, terrain, spells, cinematic troop clashes, phase-aware music, and visible enemy turns.</p>
       </div>
       <div class="badge" id="phase">Player Phase</div>
     </header>
@@ -779,14 +900,17 @@
         </div>
         <div class="squad left ally" id="leftSquad"></div>
         <div class="squad right enemy" id="rightSquad"></div>
+        <div class="projectile" id="projectile"></div>
         <div class="flying-glaive" id="glaive"></div>
         <div class="impact" id="impact"></div>
+        <div class="damage-pop" id="damagePop"></div>
+        <div class="battle-caption" id="battleCaption">Battle theater standing by</div>
       </div>
     </section>
   </main>
 
   <script>
-    const VERSION = "v0.26.05.23.1417 - Enemy March";
+    const VERSION = "v0.26.05.23.1431 - Battle Theater";
 
     const heroicTracks = [
       ["Phase Runner Neon", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/01_phase_runner_neon_genesis_rock_hifi.mp3"],
@@ -949,6 +1073,9 @@
     const rightSquad = document.querySelector("#rightSquad");
     const impact = document.querySelector("#impact");
     const glaive = document.querySelector("#glaive");
+    const projectile = document.querySelector("#projectile");
+    const damagePop = document.querySelector("#damagePop");
+    const battleCaption = document.querySelector("#battleCaption");
     const music = new Audio();
     music.loop = true;
     music.volume = 0.45;
@@ -1263,42 +1390,89 @@
       }
     }
 
+    function battleVerb(unit) {
+      return {
+        archers: "looses a star-arrow volley",
+        pikes: "drives forward behind braced pikes",
+        beasts: "launches a rift-beast lunge",
+        knights: "orders a solar knight charge",
+        infantry: "pushes into a rune infantry clash"
+      }[unit.type] || "attacks";
+    }
+
+    function soldierFormation(type, index) {
+      const formations = {
+        archers: [[4, 4], [31, 16], [58, 4], [85, 16], [112, 4]],
+        pikes: [[2, 2], [28, 2], [54, 2], [80, 2], [106, 2]],
+        beasts: [[0, 2], [32, 16], [64, 4], [96, 16], [124, 2]],
+        knights: [[0, 0], [30, 14], [60, 0], [90, 14], [120, 0]],
+        infantry: [[0, 0], [27, 11], [54, 0], [81, 11], [108, 0]]
+      };
+      return (formations[type] || formations.infantry)[index] || [index * 28, 0];
+    }
+
+    function addBattleSoldiers(squad, unit) {
+      for (let i = 0; i < Math.min(unit.troops, 5); i += 1) {
+        const soldier = document.createElement("i");
+        const [x, y] = soldierFormation(unit.type, i);
+        soldier.className = `soldier ${unit.type}`;
+        soldier.style.setProperty("--x", `${x}px`);
+        soldier.style.setProperty("--y", `${y}px`);
+        squad.appendChild(soldier);
+      }
+    }
+
     function setupBattle(attacker, defender) {
       const terrain = tileAt(defender.x, defender.y);
       battleBg.className = `battle-bg ${terrain.bg}`;
-      document.querySelector("#leftLabel").textContent = attacker.name;
-      document.querySelector("#rightLabel").textContent = defender.name;
-      leftSquad.className = `squad left ${attacker.side}`;
-      rightSquad.className = `squad right ${defender.side}`;
+      document.querySelector("#leftLabel").textContent = `${attacker.name} - ${troopChart[attacker.type].name}`;
+      document.querySelector("#rightLabel").textContent = `${defender.name} - ${troopChart[defender.type].name}`;
+      leftSquad.className = `squad left ${attacker.side} type-${attacker.type}`;
+      rightSquad.className = `squad right ${defender.side} type-${defender.type}`;
       leftSquad.innerHTML = "";
       rightSquad.innerHTML = "";
+      damagePop.innerHTML = "";
+      damagePop.classList.remove("show");
+      battleCaption.textContent = `${attacker.name} ${battleVerb(attacker)}.`;
       const leftCommander = document.createElement("i");
       leftCommander.className = `commander ${attacker.id === "cael" ? "cael" : ""}`;
       const rightCommander = document.createElement("i");
       rightCommander.className = `commander ${defender.id === "cael" ? "cael" : ""}`;
       leftSquad.appendChild(leftCommander);
       rightSquad.appendChild(rightCommander);
-      for (let i = 0; i < Math.min(attacker.troops, 5); i += 1) leftSquad.appendChild(document.createElement("i")).className = "soldier";
-      for (let i = 0; i < Math.min(defender.troops, 5); i += 1) rightSquad.appendChild(document.createElement("i")).className = "soldier";
+      addBattleSoldiers(leftSquad, attacker);
+      addBattleSoldiers(rightSquad, defender);
     }
 
     function animateBattle(attacker, losses = { attacker: 0, defender: 0 }) {
-      leftSquad.classList.remove("charge");
-      rightSquad.classList.remove("charge");
+      leftSquad.classList.remove("charge", "lunge", "brace", "volley");
+      rightSquad.classList.remove("charge", "lunge", "brace", "volley");
       impact.classList.remove("flash");
       glaive.classList.remove("fly");
+      projectile.classList.remove("volley-shot");
+      damagePop.classList.remove("show");
       void leftSquad.offsetWidth;
-      leftSquad.classList.add("charge");
-      rightSquad.classList.add("charge");
+      if (attacker.type === "archers") {
+        leftSquad.classList.add("volley");
+        projectile.classList.add("volley-shot");
+      } else if (attacker.type === "beasts") {
+        leftSquad.classList.add("lunge");
+        rightSquad.classList.add("brace");
+      } else {
+        leftSquad.classList.add("charge");
+        rightSquad.classList.add(attacker.type === "pikes" ? "brace" : "charge");
+      }
       if (attacker.id === "cael") glaive.classList.add("fly");
       setTimeout(() => impact.classList.add("flash"), 450);
       setTimeout(() => {
         [...rightSquad.querySelectorAll(".soldier")].slice(0, Math.min(losses.defender, 5)).forEach(node => node.classList.add("fallen"));
         [...leftSquad.querySelectorAll(".soldier")].slice(0, Math.min(losses.attacker, 5)).forEach(node => node.classList.add("fallen"));
+        damagePop.innerHTML = `<span>Target -${losses.defender}</span><span>Return -${losses.attacker}</span>`;
+        damagePop.classList.add("show");
       }, 560);
       setTimeout(() => {
-        leftSquad.classList.remove("charge");
-        rightSquad.classList.remove("charge");
+        leftSquad.classList.remove("charge", "lunge", "brace", "volley");
+        rightSquad.classList.remove("charge", "lunge", "brace", "volley");
       }, 1050);
     }
 
@@ -1323,6 +1497,7 @@
       attacker.guarding = false;
 
       const edgeText = edge > 0 ? "advantage" : edge < 0 ? "bad matchup" : "even matchup";
+      battleCaption.textContent = `${attacker.name} ${battleVerb(attacker)}: ${defender.name} loses ${base}, ${attacker.name} loses ${retaliation}.`;
       addLog(`${attacker.name} attacks ${defender.name}: ${base} damage, ${retaliation} lost in return, ${edgeText}.`);
       if (defender.troops <= 0) addLog(`${defender.name} is routed from the field.`);
       checkWinLoss();
