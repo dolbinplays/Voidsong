@@ -1,0 +1,122 @@
+[
+  {
+    "source_midi": "01_phase_runner_neon.mid",
+    "wav": "01_phase_runner_neon_genesis_rock_hifi.wav",
+    "mp3": "01_phase_runner_neon_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "02_turbo_sector_alpha.mid",
+    "wav": "02_turbo_sector_alpha_genesis_rock_hifi.wav",
+    "mp3": "02_turbo_sector_alpha_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "03_chrome_alley_chase.mid",
+    "wav": "03_chrome_alley_chase_genesis_rock_hifi.wav",
+    "mp3": "03_chrome_alley_chase_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "04_meteor_rail_sprint.mid",
+    "wav": "04_meteor_rail_sprint_genesis_rock_hifi.wav",
+    "mp3": "04_meteor_rail_sprint_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "05_boss_door_ignition.mid",
+    "wav": "05_boss_door_ignition_genesis_rock_hifi.wav",
+    "mp3": "05_boss_door_ignition_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "06_circuit_lava_rush.mid",
+    "wav": "06_circuit_lava_rush_genesis_rock_hifi.wav",
+    "mp3": "06_circuit_lava_rush_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "07_emerald_reactor_loop.mid",
+    "wav": "07_emerald_reactor_loop_genesis_rock_hifi.wav",
+    "mp3": "07_emerald_reactor_loop_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "08_skyline_overdrive.mid",
+    "wav": "08_skyline_overdrive_genesis_rock_hifi.wav",
+    "mp3": "08_skyline_overdrive_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "09_quantum_scrap_yard.mid",
+    "wav": "09_quantum_scrap_yard_genesis_rock_hifi.wav",
+    "mp3": "09_quantum_scrap_yard_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "10_final_phase_velocity.mid",
+    "wav": "10_final_phase_velocity_genesis_rock_hifi.wav",
+    "mp3": "10_final_phase_velocity_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.7
+  },
+  {
+    "source_midi": "11_11_starway_dash_variation.mid",
+    "wav": "11_11_starway_dash_variation_genesis_rock_hifi.wav",
+    "mp3": "11_11_starway_dash_variation_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.04
+  },
+  {
+    "source_midi": "12_12_crystal_turbine_sprint.mid",
+    "wav": "12_12_crystal_turbine_sprint_genesis_rock_hifi.wav",
+    "mp3": "12_12_crystal_turbine_sprint_genesis_rock_hifi.mp3",
+    "duration_seconds": 51.96
+  },
+  {
+    "source_midi": "13_13_afterburn_bridge_run.mid",
+    "wav": "13_13_afterburn_bridge_run_genesis_rock_hifi.wav",
+    "mp3": "13_13_afterburn_bridge_run_genesis_rock_hifi.mp3",
+    "duration_seconds": 48.27
+  },
+  {
+    "source_midi": "14_14_rainbow_overclock_zone.mid",
+    "wav": "14_14_rainbow_overclock_zone_genesis_rock_hifi.wav",
+    "mp3": "14_14_rainbow_overclock_zone_genesis_rock_hifi.mp3",
+    "duration_seconds": 53.32
+  },
+  {
+    "source_midi": "15_15_neon_elevator_assault.mid",
+    "wav": "15_15_neon_elevator_assault_genesis_rock_hifi.wav",
+    "mp3": "15_15_neon_elevator_assault_genesis_rock_hifi.mp3",
+    "duration_seconds": 50.67
+  },
+  {
+    "source_midi": "16_16_solar_panel_speedway.mid",
+    "wav": "16_16_solar_panel_speedway_genesis_rock_hifi.wav",
+    "mp3": "16_16_solar_panel_speedway_genesis_rock_hifi.mp3",
+    "duration_seconds": 49.44
+  },
+  {
+    "source_midi": "17_17_turbo_aqueduct_loop.mid",
+    "wav": "17_17_turbo_aqueduct_loop_genesis_rock_hifi.wav",
+    "mp3": "17_17_turbo_aqueduct_loop_genesis_rock_hifi.mp3",
+    "duration_seconds": 54.03
+  },
+  {
+    "source_midi": "18_18_gearshift_moonbase.mid",
+    "wav": "18_18_gearshift_moonbase_genesis_rock_hifi.wav",
+    "mp3": "18_18_gearshift_moonbase_genesis_rock_hifi.mp3",
+    "duration_seconds": 51.31
+  },
+  {
+    "source_midi": "19_19_sapphire_circuit_climb.mid",
+    "wav": "19_19_sapphire_circuit_climb_genesis_rock_hifi.wav",
+    "mp3": "19_19_sapphire_circuit_climb_genesis_rock_hifi.mp3",
+    "duration_seconds": 52.63
+  },
+  {
+    "source_midi": "20_20_final_lap_rescue.mid",
+    "wav": "20_20_final_lap_rescue_genesis_rock_hifi.wav",
+    "mp3": "20_20_final_lap_rescue_genesis_rock_hifi.mp3",
+    "duration_seconds": 47.7
+  }
+]

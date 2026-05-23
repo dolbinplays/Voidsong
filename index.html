@@ -1,0 +1,1534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voidsong - Mission 1 Prototype</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111217;
+      --panel: #20242b;
+      --panel-2: #2b3038;
+      --ink: #f3ead2;
+      --muted: #aeb4b9;
+      --line: #454b52;
+      --gold: #e6bb62;
+      --cyan: #80d7db;
+      --red: #df6963;
+      --green: #8ccf7e;
+      --violet: #b58adf;
+      --tile: 52px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(230, 187, 98, 0.12), transparent 26rem),
+        linear-gradient(135deg, #101116, #171a21 48%, #0f1217);
+      color: var(--ink);
+      font: 15px/1.45 system-ui, -apple-system, Segoe UI, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, select {
+      font: inherit;
+      color: var(--ink);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--gold);
+    }
+
+    button {
+      min-height: 34px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover, button:focus-visible { border-color: var(--gold); }
+    button:disabled { cursor: not-allowed; opacity: 0.45; }
+
+    .app {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 340px;
+      gap: 16px;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 12px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(24px, 4vw, 42px); line-height: 1; color: var(--gold); }
+    h2 { font-size: 16px; color: var(--cyan); }
+    h3 { font-size: 14px; color: var(--gold); }
+
+    .subtitle { color: var(--muted); max-width: 720px; }
+
+    .map-shell, aside, .battle-shell, .deployment {
+      background: rgba(32, 36, 43, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px;
+      background: #181b20;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toolbar .group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.18);
+      white-space: nowrap;
+    }
+
+    .deployment {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.25fr);
+      gap: 0;
+    }
+
+    .deployment.hidden { display: none; }
+
+    .briefing {
+      min-height: 360px;
+      padding: 22px;
+      background:
+        linear-gradient(rgba(13, 15, 20, 0.4), rgba(13, 15, 20, 0.72)),
+        radial-gradient(circle at 60% 20%, rgba(128, 215, 219, 0.18), transparent 18rem),
+        linear-gradient(145deg, #1f2d33, #111217);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .briefing h2 {
+      color: var(--gold);
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .briefing p { color: #ddd7c8; max-width: 56ch; }
+
+    .mission-rules {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    .deployment-panel {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    #deployCards {
+      display: grid;
+      gap: 10px;
+    }
+
+    .deploy-card {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    .deploy-card .unit { width: 42px; height: 46px; }
+
+    .loadout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .loadout label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .loadout select {
+      width: 100%;
+      min-height: 32px;
+      padding: 0 8px;
+    }
+
+    .hire-row {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hire-row button {
+      width: 34px;
+      padding: 0;
+    }
+
+    .meter {
+      position: relative;
+      height: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.28);
+    }
+
+    .meter span {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--fill);
+      background: linear-gradient(90deg, var(--cyan), var(--gold));
+    }
+
+    .prep-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .map-wrap {
+      overflow: auto;
+      padding: 12px;
+    }
+
+    #map {
+      display: grid;
+      grid-template-columns: repeat(10, var(--tile));
+      grid-template-rows: repeat(8, var(--tile));
+      width: calc(10 * var(--tile));
+      height: calc(8 * var(--tile));
+      border: 2px solid #0c0d10;
+      image-rendering: pixelated;
+    }
+
+    .tile {
+      position: relative;
+      border: 1px solid rgba(0, 0, 0, 0.35);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      isolation: isolate;
+    }
+
+    .tile.crystal { background: linear-gradient(135deg, #375a66, #193943); }
+    .tile.dunes { background: linear-gradient(135deg, #8b7443, #51452d); }
+    .tile.ruins { background: linear-gradient(135deg, #63666b, #333942); }
+    .tile.forest { background: linear-gradient(135deg, #315848, #172c27); }
+    .tile.void { background: linear-gradient(135deg, #2d234b, #12111c); }
+    .tile.gate { background: linear-gradient(135deg, #285a71, #3f244d); }
+
+    .tile::after {
+      content: attr(data-mark);
+      position: absolute;
+      left: 4px;
+      bottom: 2px;
+      color: rgba(255,255,255,0.45);
+      font-size: 10px;
+      z-index: 0;
+    }
+
+    .tile.selected { outline: 3px solid var(--gold); outline-offset: -3px; }
+    .tile.in-range { box-shadow: inset 0 0 0 4px rgba(128, 215, 219, 0.35); }
+    .tile.can-attack { box-shadow: inset 0 0 0 4px rgba(223, 105, 99, 0.55); }
+    .tile.escape { box-shadow: inset 0 -5px 0 rgba(140, 207, 126, 0.82); }
+    .tile.escape::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 2px solid rgba(140, 207, 126, 0.55);
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .unit {
+      position: relative;
+      width: 38px;
+      height: 42px;
+      z-index: 2;
+      filter: drop-shadow(0 3px 0 rgba(0,0,0,0.45));
+    }
+
+    .unit .body, .unit .head, .unit .weapon, .unit .banner, .unit .glaive {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .unit .body {
+      bottom: 5px;
+      width: 24px;
+      height: 25px;
+      background: var(--unit);
+      border: 2px solid #0b0c0f;
+      clip-path: polygon(50% 0, 88% 20%, 92% 100%, 8% 100%, 12% 20%);
+    }
+
+    .unit .head {
+      top: 1px;
+      width: 18px;
+      height: 16px;
+      background: #d8b582;
+      border: 2px solid #0b0c0f;
+      border-radius: 45% 45% 40% 40%;
+    }
+
+    .unit .weapon {
+      right: 0;
+      left: auto;
+      bottom: 10px;
+      width: 4px;
+      height: 27px;
+      background: #d6d2c3;
+      transform: rotate(-32deg);
+      transform-origin: bottom center;
+    }
+
+    .unit .banner {
+      left: 5px;
+      bottom: 9px;
+      width: 5px;
+      height: 26px;
+      background: #16181d;
+      transform: none;
+    }
+
+    .unit .banner::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 0;
+      width: 13px;
+      height: 11px;
+      background: var(--unit2);
+      clip-path: polygon(0 0, 100% 0, 70% 50%, 100% 100%, 0 100%);
+    }
+
+    .unit .glaive {
+      left: 14px;
+      bottom: 15px;
+      width: 18px;
+      height: 18px;
+      border: 3px solid var(--cyan);
+      border-radius: 50%;
+      transform: none;
+      box-shadow: 0 0 10px rgba(128, 215, 219, 0.75);
+    }
+
+    .unit .glaive::before, .unit .glaive::after {
+      content: "";
+      position: absolute;
+      inset: -5px 6px;
+      background: var(--cyan);
+      clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    }
+
+    .unit .glaive::after { transform: rotate(90deg); }
+
+    .unit .count {
+      position: absolute;
+      right: -5px;
+      bottom: -2px;
+      min-width: 17px;
+      height: 17px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: #0b0c0f;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      font-size: 10px;
+      font-style: normal;
+      z-index: 4;
+    }
+
+    .enemy { --unit: #7f3742; --unit2: #db635f; }
+    .ally { --unit: #2d7180; --unit2: #e6bb62; }
+    .neutral { --unit: #5a6070; --unit2: #aeb4b9; }
+
+    aside {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-height: 520px;
+    }
+
+    .panel {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .log {
+      overflow: auto;
+      min-height: 160px;
+      max-height: 260px;
+      padding: 12px 14px;
+      color: var(--muted);
+    }
+
+    .log p {
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .battle-shell {
+      grid-column: 1 / -1;
+      min-height: 270px;
+    }
+
+    #battle {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+      background: #222;
+    }
+
+    .battle-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(#253743 0 55%, #635542 56% 100%);
+    }
+
+    .battle-bg.crystal { background: linear-gradient(#223f54 0 56%, #315d68 57% 100%); }
+    .battle-bg.dunes { background: linear-gradient(#594a39 0 56%, #8a7547 57% 100%); }
+    .battle-bg.ruins { background: linear-gradient(#353a44 0 56%, #5f6267 57% 100%); }
+    .battle-bg.forest { background: linear-gradient(#18342c 0 56%, #315848 57% 100%); }
+    .battle-bg.void { background: linear-gradient(#151426 0 56%, #2d234b 57% 100%); }
+    .battle-bg.gate { background: linear-gradient(#1c445d 0 56%, #3e3458 57% 100%); }
+
+    .battle-bg::before {
+      content: "";
+      position: absolute;
+      inset: 18px 0 auto;
+      height: 90px;
+      background:
+        linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent),
+        repeating-linear-gradient(90deg, transparent 0 70px, rgba(255,255,255,0.08) 70px 72px);
+      opacity: 0.45;
+    }
+
+    .squad {
+      position: absolute;
+      bottom: 38px;
+      width: 160px;
+      height: 72px;
+      transition: transform 520ms ease-in;
+    }
+
+    .squad.left { left: 34px; }
+    .squad.right { right: 34px; transform: scaleX(-1); }
+    .squad.left.charge { transform: translateX(270px); }
+    .squad.right.charge { transform: translateX(-270px) scaleX(-1); }
+
+    .soldier {
+      position: absolute;
+      bottom: 0;
+      width: 22px;
+      height: 34px;
+      background: var(--unit);
+      border: 2px solid #08090b;
+      clip-path: polygon(50% 0, 86% 25%, 100% 100%, 0 100%, 14% 25%);
+    }
+
+    .soldier:nth-child(1) { left: 0; bottom: 0; }
+    .soldier:nth-child(2) { left: 28px; bottom: 12px; }
+    .soldier:nth-child(3) { left: 56px; bottom: 0; }
+    .soldier:nth-child(4) { left: 84px; bottom: 12px; }
+    .soldier:nth-child(5) { left: 112px; bottom: 0; }
+
+    .soldier::before {
+      content: "";
+      position: absolute;
+      top: -11px;
+      left: 3px;
+      width: 13px;
+      height: 11px;
+      background: #d8b582;
+      border: 2px solid #08090b;
+      border-radius: 50% 50% 35% 35%;
+    }
+
+    .soldier::after {
+      content: "";
+      position: absolute;
+      right: -7px;
+      top: 6px;
+      width: 4px;
+      height: 30px;
+      background: #d6d2c3;
+      transform: rotate(-28deg);
+    }
+
+    .soldier.fallen {
+      animation: fall 520ms ease-out forwards;
+    }
+
+    .commander {
+      position: absolute;
+      bottom: 24px;
+      width: 34px;
+      height: 52px;
+      background: var(--unit2);
+      border: 2px solid #07080a;
+      clip-path: polygon(50% 0, 88% 18%, 84% 100%, 16% 100%, 12% 18%);
+      filter: drop-shadow(0 4px 0 rgba(0,0,0,0.45));
+    }
+
+    .squad.left .commander { left: -20px; }
+    .squad.right .commander { left: -20px; }
+
+    .commander::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: -14px;
+      width: 16px;
+      height: 14px;
+      background: #d8b582;
+      border: 2px solid #07080a;
+      border-radius: 45% 45% 35% 35%;
+    }
+
+    .commander.cael::after {
+      content: "";
+      position: absolute;
+      left: -11px;
+      top: 16px;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(128,215,219,0.9);
+    }
+
+    .impact {
+      position: absolute;
+      left: 50%;
+      bottom: 78px;
+      width: 10px;
+      height: 10px;
+      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 28px 18px rgba(230, 187, 98, 0.5);
+      opacity: 0;
+    }
+
+    .impact.flash { animation: flash 420ms ease-out; }
+
+    .flying-glaive {
+      position: absolute;
+      left: 130px;
+      bottom: 110px;
+      width: 28px;
+      height: 28px;
+      border: 4px solid var(--cyan);
+      border-radius: 50%;
+      opacity: 0;
+      box-shadow: 0 0 18px rgba(128, 215, 219, 0.9);
+    }
+
+    .flying-glaive.fly { animation: glaive 850ms ease-in-out; }
+
+    @keyframes flash {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+      40% { opacity: 1; transform: translate(-50%, -50%) scale(6); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(10); }
+    }
+
+    @keyframes glaive {
+      0% { opacity: 0; transform: translate(0, 0) rotate(0turn); }
+      15% { opacity: 1; }
+      55% { opacity: 1; transform: translate(440px, -18px) rotate(2.3turn); }
+      100% { opacity: 0; transform: translate(0, 0) rotate(4turn); }
+    }
+
+    @keyframes fall {
+      0% { transform: rotate(0deg); opacity: 1; }
+      100% { transform: translateY(18px) rotate(82deg); opacity: 0.22; }
+    }
+
+    .battle-text {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #fff8df;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    @media (max-width: 940px) {
+      :root { --tile: min(9.2vw, 48px); }
+      .app { grid-template-columns: 1fr; padding: 10px; }
+      header { align-items: start; flex-direction: column; }
+      aside { min-height: unset; }
+      .battle-shell { grid-column: 1; }
+      .deployment { grid-template-columns: 1fr; }
+      .briefing { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      .loadout { grid-template-columns: 1fr; }
+      .squad.left.charge { transform: translateX(34vw); }
+      .squad.right.charge { transform: translateX(-34vw) scaleX(-1); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>Voidsong</h1>
+        <p class="subtitle">v0.26.05.23.1400 - Dynamic Soundtrack. A space-fantasy tactical RPG prototype with army preparation, hired troop squads, class paths, relics, terrain, spells, cinematic clashes, and phase-aware music.</p>
+      </div>
+      <div class="badge" id="phase">Player Phase</div>
+    </header>
+
+    <section class="deployment" id="deployment" aria-label="Mission deployment">
+      <div class="briefing">
+        <div>
+          <h2>Mission 1: The Fall of Lyra Gate</h2>
+          <p>The capital burns behind the royal convoy. Prince Cael and the last loyal banners must hold the ancient star gate while civilians escape through the collapsing light bridge.</p>
+        </div>
+        <div class="mission-rules">
+          <span>Win: survive 6 turns or rout Lord Varkos.</span>
+          <span>Lose: Prince Cael is routed, or any enemy reaches the western escape gate.</span>
+          <span>Terrain in the battle window mirrors the tactical tile where combat happens.</span>
+        </div>
+      </div>
+      <div class="deployment-panel">
+        <h2>War Council</h2>
+        <p class="subtitle">Spend crowns to hire troops, set each commander's class path, and choose relics before the retreat battle begins.</p>
+        <div class="badge" id="treasury">Treasury: 240 crowns</div>
+        <div id="deployCards"></div>
+        <button id="startMission">Start Mission</button>
+      </div>
+    </section>
+
+    <section class="map-shell" aria-label="Tactical map">
+      <div class="toolbar">
+        <div class="group">
+          <button id="endTurn">End Turn</button>
+          <button id="reset">Reset Battle</button>
+          <button id="deploymentReset">Deployment</button>
+        </div>
+        <div class="group">
+          <span class="badge" id="objective">Hold the star gate</span>
+          <span class="badge" id="turnReadout">Turn 1/6</span>
+          <span class="badge" id="treasure">Relic: undiscovered</span>
+        </div>
+      </div>
+      <div class="map-wrap">
+        <div id="map"></div>
+      </div>
+    </section>
+
+    <aside>
+      <section class="panel">
+        <h2 id="selectedName">Select a commander</h2>
+        <p id="selectedDesc" class="subtitle">Click Prince Cael or an allied commander to inspect orders. Click enemies to compare troop matchups.</p>
+        <div class="stats">
+          <div class="stat"><span>Troops</span><strong id="troops">-</strong></div>
+          <div class="stat"><span>Type</span><strong id="type">-</strong></div>
+          <div class="stat"><span>Terrain</span><strong id="terrain">-</strong></div>
+          <div class="stat"><span>Morale</span><strong id="morale">-</strong></div>
+        </div>
+        <div class="status-grid">
+          <div class="stat"><span>Attack</span><strong id="attackStat">-</strong></div>
+          <div class="stat"><span>Defense</span><strong id="defenseStat">-</strong></div>
+          <div class="stat"><span>Relic</span><strong id="relicStat">-</strong></div>
+        </div>
+      </section>
+      <section class="panel">
+        <h3>Audio</h3>
+        <div class="actions">
+          <button id="musicToggle">Music Off</button>
+          <button id="nextTrack">Next Track</button>
+        </div>
+        <div class="loadout">
+          <label>Soundtrack Mode
+            <select id="musicMode">
+              <option value="dynamic">Dynamic</option>
+              <option value="heroic">Heroic</option>
+              <option value="ominous">Bad Guys</option>
+            </select>
+          </label>
+          <label>Volume
+            <input id="musicVolume" type="range" min="0" max="100" value="45">
+          </label>
+          <label>Now Playing
+            <select id="trackSelect"></select>
+          </label>
+        </div>
+        <p class="prep-note" id="musicStatus">Music ready. Press the music button to start.</p>
+      </section>
+      <section class="panel">
+        <h3>Orders</h3>
+        <div class="actions">
+          <button id="guard">Shield Glaive</button>
+          <button id="spell">Solar Lance</button>
+          <button id="rally">Rally Troops</button>
+          <button id="wait">Wait</button>
+        </div>
+      </section>
+      <section class="log" id="log" aria-live="polite"></section>
+    </aside>
+
+    <section class="battle-shell" aria-label="Battle scene">
+      <div class="toolbar">
+        <h2>Battle Window</h2>
+        <span class="badge" id="battleReadout">Terrain mirrored from selected tile</span>
+      </div>
+      <div id="battle">
+        <div class="battle-bg crystal" id="battleBg"></div>
+        <div class="battle-text">
+          <strong id="leftLabel">Solar Banner</strong>
+          <strong id="rightLabel">Void Host</strong>
+        </div>
+        <div class="squad left ally" id="leftSquad"></div>
+        <div class="squad right enemy" id="rightSquad"></div>
+        <div class="flying-glaive" id="glaive"></div>
+        <div class="impact" id="impact"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const VERSION = "v0.26.05.23.1400 - Dynamic Soundtrack";
+
+    const heroicTracks = [
+      ["Phase Runner Neon", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/01_phase_runner_neon_genesis_rock_hifi.mp3"],
+      ["Turbo Sector Alpha", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/02_turbo_sector_alpha_genesis_rock_hifi.mp3"],
+      ["Chrome Alley Chase", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/03_chrome_alley_chase_genesis_rock_hifi.mp3"],
+      ["Meteor Rail Sprint", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/04_meteor_rail_sprint_genesis_rock_hifi.mp3"],
+      ["Boss Door Ignition", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/05_boss_door_ignition_genesis_rock_hifi.mp3"],
+      ["Circuit Lava Rush", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/06_circuit_lava_rush_genesis_rock_hifi.mp3"],
+      ["Emerald Reactor Loop", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/07_emerald_reactor_loop_genesis_rock_hifi.mp3"],
+      ["Skyline Overdrive", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/08_skyline_overdrive_genesis_rock_hifi.mp3"],
+      ["Quantum Scrap Yard", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/09_quantum_scrap_yard_genesis_rock_hifi.mp3"],
+      ["Final Phase Velocity", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/10_final_phase_velocity_genesis_rock_hifi.mp3"],
+      ["Starway Dash Variation", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/11_11_starway_dash_variation_genesis_rock_hifi.mp3"],
+      ["Crystal Turbine Sprint", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/12_12_crystal_turbine_sprint_genesis_rock_hifi.mp3"],
+      ["Afterburn Bridge Run", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/13_13_afterburn_bridge_run_genesis_rock_hifi.mp3"],
+      ["Rainbow Overclock Zone", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/14_14_rainbow_overclock_zone_genesis_rock_hifi.mp3"],
+      ["Neon Elevator Assault", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/15_15_neon_elevator_assault_genesis_rock_hifi.mp3"],
+      ["Solar Panel Speedway", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/16_16_solar_panel_speedway_genesis_rock_hifi.mp3"],
+      ["Turbo Aqueduct Loop", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/17_17_turbo_aqueduct_loop_genesis_rock_hifi.mp3"],
+      ["Gearshift Moonbase", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/18_18_gearshift_moonbase_genesis_rock_hifi.mp3"],
+      ["Sapphire Circuit Climb", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/19_19_sapphire_circuit_climb_genesis_rock_hifi.mp3"],
+      ["Final Lap Rescue", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/20_20_final_lap_rescue_genesis_rock_hifi.mp3"]
+    ];
+
+    const ominousTracks = [
+      ["Shadow Foundry Intro", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/21_21_shadow_foundry_intro_evil_ominous_genesis_rock.mp3"],
+      ["Badnik Overlord Theme", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/22_22_badnik_overlord_theme_evil_ominous_genesis_rock.mp3"],
+      ["Black Citadel March", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/23_23_black_citadel_march_evil_ominous_genesis_rock.mp3"],
+      ["Poison Reactor Depths", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/24_24_poison_reactor_depths_evil_ominous_genesis_rock.mp3"],
+      ["Mirror Mask Pursuit", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/25_25_mirror_mask_pursuit_evil_ominous_genesis_rock.mp3"],
+      ["Eclipse Hangar Boss", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/26_26_eclipse_hangar_boss_evil_ominous_genesis_rock.mp3"],
+      ["Night Train to Nowhere", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/27_27_night_train_to_nowhere_evil_ominous_genesis_rock.mp3"],
+      ["Serpent Machine Lair", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/28_28_serpent_machine_lair_evil_ominous_genesis_rock.mp3"],
+      ["Red Alert Fortress", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/29_29_red_alert_fortress_evil_ominous_genesis_rock.mp3"],
+      ["Final Villain Protocol", "assets/music/Soundtrack/evil_ominous_genesis_rock_mp3_320kbps_set/30_30_final_villain_protocol_evil_ominous_genesis_rock.mp3"]
+    ];
+
+    const terrains = {
+      crystal: { name: "Crystal Flats", mark: "Cr", def: 1, bg: "crystal" },
+      dunes: { name: "Glass Dunes", mark: "Du", def: 0, bg: "dunes" },
+      ruins: { name: "Orbital Ruins", mark: "Ru", def: 2, bg: "ruins" },
+      forest: { name: "Spore Forest", mark: "Fo", def: 2, bg: "forest" },
+      void: { name: "Void Scar", mark: "Vo", def: -1, bg: "void" },
+      gate: { name: "Star Gate", mark: "Ga", def: 3, bg: "gate" }
+    };
+
+    const troopChart = {
+      knights: { name: "Solar Knights", strong: "infantry", weak: "pikes", atk: 7, def: 5, max: 10, cost: 12 },
+      pikes: { name: "Star Pikes", strong: "beasts", weak: "archers", atk: 6, def: 6, max: 10, cost: 10 },
+      archers: { name: "Star Archers", strong: "pikes", weak: "knights", atk: 5, def: 3, max: 8, cost: 11 },
+      infantry: { name: "Rune Infantry", strong: "archers", weak: "knights", atk: 5, def: 5, max: 9, cost: 8 },
+      beasts: { name: "Rift Beasts", strong: "archers", weak: "pikes", atk: 8, def: 3, max: 7, cost: 14 }
+    };
+
+    const classPaths = {
+      guardian: { name: "Guardian", atk: 0, def: 2, morale: 1, spell: 0 },
+      blade: { name: "Blade", atk: 2, def: 0, morale: 0, spell: 0 },
+      astral: { name: "Astral", atk: 0, def: 0, morale: 0, spell: 2 }
+    };
+
+    const relicStats = {
+      "Arm-Mounted Star Glaive": { atk: 1, def: 1, spell: 0, note: "Cael can guard and throw the glaive." },
+      "Crystal Bracer": { atk: 0, def: 2, spell: 0, note: "Improves shielded defenses." },
+      "Solar Bracer": { atk: 2, def: 0, spell: 1, note: "Improves attack and Solar Lance." },
+      "Moonbow": { atk: 1, def: 0, spell: 1, note: "Sharpens ranged volleys and magic." },
+      "Scout Mantle": { atk: 0, def: 1, spell: 0, note: "A light mantle for survival." },
+      "Sunforge Blade": { atk: 2, def: 0, spell: 0, note: "A commander blade for direct assaults." },
+      "Gate Ward": { atk: 0, def: 2, spell: 1, note: "Old warding metal from Lyra Gate." }
+    };
+
+    const startingCrowns = 240;
+
+    const commanderDefs = [
+      {
+        id: "cael",
+        side: "ally",
+        name: "Prince Cael",
+        title: "Star Glaive Prince",
+        x: 1,
+        y: 5,
+        morale: 8,
+        commander: true,
+        relic: "Arm-Mounted Star Glaive",
+        troopChoices: ["knights", "infantry"],
+        relicChoices: ["Arm-Mounted Star Glaive", "Crystal Bracer", "Solar Bracer"]
+      },
+      {
+        id: "sera",
+        side: "ally",
+        name: "Sera Voss",
+        title: "Astral Ranger",
+        x: 0,
+        y: 6,
+        morale: 7,
+        commander: true,
+        relic: "Moonbow",
+        troopChoices: ["archers", "infantry"],
+        relicChoices: ["Moonbow", "Scout Mantle"]
+      },
+      {
+        id: "maelor",
+        side: "ally",
+        name: "Maelor",
+        title: "Rune Captain",
+        x: 2,
+        y: 6,
+        morale: 7,
+        commander: true,
+        relic: "Sunforge Blade",
+        troopChoices: ["infantry", "pikes"],
+        relicChoices: ["Sunforge Blade", "Gate Ward"]
+      }
+    ];
+
+    const loadout = {
+      cael: { type: "knights", relic: "Arm-Mounted Star Glaive", path: "guardian", hire: 8 },
+      sera: { type: "archers", relic: "Moonbow", path: "astral", hire: 6 },
+      maelor: { type: "infantry", relic: "Sunforge Blade", path: "blade", hire: 7 }
+    };
+
+    const mapTiles = [
+      "crystal","crystal","dunes","dunes","ruins","ruins","forest","forest","void","void",
+      "crystal","dunes","dunes","ruins","ruins","forest","forest","void","void","void",
+      "crystal","crystal","dunes","ruins","gate","gate","forest","forest","void","void",
+      "dunes","dunes","dunes","ruins","gate","gate","forest","void","void","void",
+      "dunes","crystal","crystal","ruins","ruins","forest","forest","forest","void","void",
+      "crystal","crystal","dunes","dunes","ruins","ruins","forest","void","void","void",
+      "crystal","dunes","dunes","ruins","ruins","forest","forest","forest","void","void",
+      "crystal","crystal","dunes","dunes","ruins","ruins","forest","void","void","void"
+    ];
+
+    const enemyUnits = [
+      { id: "vark", side: "enemy", name: "Lord Varkos", title: "Void Marshal", x: 8, y: 2, troops: 10, max: 10, type: "pikes", morale: 8, moved: false, commander: true },
+      { id: "beast", side: "enemy", name: "Rift Pack", title: "Beast Troop", x: 7, y: 3, troops: 7, max: 7, type: "beasts", morale: 6, moved: false },
+      { id: "raiders", side: "enemy", name: "Void Raiders", title: "Infantry Troop", x: 8, y: 5, troops: 8, max: 8, type: "infantry", morale: 6, moved: false },
+      { id: "spears", side: "enemy", name: "Ash Spears", title: "Pike Troop", x: 9, y: 3, troops: 8, max: 8, type: "pikes", morale: 6, moved: false }
+    ];
+
+    let units = [];
+    let selectedId = null;
+    let playerPhase = true;
+    let relicFound = false;
+    let missionStarted = false;
+    let battleOver = false;
+    let turn = 1;
+    let musicEnabled = false;
+    let currentMusicPool = "heroic";
+    let currentTrackIndex = 0;
+    const maxTurns = 6;
+    const escapeZones = [{ x: 0, y: 5 }, { x: 0, y: 6 }];
+
+    const map = document.querySelector("#map");
+    const log = document.querySelector("#log");
+    const deployment = document.querySelector("#deployment");
+    const deployCards = document.querySelector("#deployCards");
+    const battleBg = document.querySelector("#battleBg");
+    const leftSquad = document.querySelector("#leftSquad");
+    const rightSquad = document.querySelector("#rightSquad");
+    const impact = document.querySelector("#impact");
+    const glaive = document.querySelector("#glaive");
+    const music = new Audio();
+    music.loop = true;
+    music.volume = 0.45;
+
+    function trackPool(kind = currentMusicPool) {
+      return kind === "ominous" ? ominousTracks : heroicTracks;
+    }
+
+    function setMusicPool(kind, forceTrack = false) {
+      const changed = currentMusicPool !== kind;
+      currentMusicPool = kind;
+      const pool = trackPool(kind);
+      currentTrackIndex = currentTrackIndex % pool.length;
+      populateTrackSelect();
+      if (forceTrack || changed || !music.src) setTrack(currentTrackIndex, false);
+      updateMusicStatus();
+      if (musicEnabled) playMusic();
+    }
+
+    function setTrack(index, shouldPlay = musicEnabled) {
+      const pool = trackPool();
+      currentTrackIndex = (index + pool.length) % pool.length;
+      const [name, src] = pool[currentTrackIndex];
+      music.src = src;
+      document.querySelector("#trackSelect").value = String(currentTrackIndex);
+      updateMusicStatus(name);
+      if (shouldPlay) playMusic();
+    }
+
+    function populateTrackSelect() {
+      const select = document.querySelector("#trackSelect");
+      select.innerHTML = "";
+      trackPool().forEach(([name], index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = name;
+        select.appendChild(option);
+      });
+      select.value = String(currentTrackIndex);
+    }
+
+    function updateMusicStatus(trackName = null) {
+      const poolName = currentMusicPool === "ominous" ? "Bad Guys" : "Heroic";
+      const name = trackName || trackPool()[currentTrackIndex]?.[0] || "No track";
+      document.querySelector("#musicStatus").textContent = `${musicEnabled ? "Playing" : "Ready"}: ${poolName} - ${name}`;
+      document.querySelector("#musicToggle").textContent = musicEnabled ? "Music: On" : "Music: Off";
+    }
+
+    function playMusic() {
+      music.play().catch(() => {
+        musicEnabled = false;
+        updateMusicStatus();
+        addLog("Browser audio is waiting for a click before music can start.");
+      });
+    }
+
+    function syncDynamicMusic(context = "player") {
+      const mode = document.querySelector("#musicMode").value;
+      if (mode === "heroic") {
+        setMusicPool("heroic", false);
+      } else if (mode === "ominous") {
+        setMusicPool("ominous", false);
+      } else {
+        setMusicPool(context === "enemy" ? "ominous" : "heroic", context === "enemy");
+      }
+    }
+
+    function buildInitialUnits() {
+      const allies = commanderDefs.map(def => {
+        const chosen = loadout[def.id];
+        const typeData = troopChart[chosen.type];
+        return {
+          ...def,
+          type: chosen.type,
+          relic: chosen.relic,
+          path: chosen.path,
+          troops: Math.min(chosen.hire, typeData.max),
+          max: typeData.max,
+          moved: false,
+          guarding: false
+        };
+      });
+      return [...allies, ...enemyUnits.map(unit => ({ ...unit, guarding: false }))];
+    }
+
+    function addLog(text) {
+      const p = document.createElement("p");
+      p.textContent = text;
+      log.prepend(p);
+    }
+
+    function unitAt(x, y) {
+      return units.find(unit => unit.x === x && unit.y === y && unit.troops > 0);
+    }
+
+    function tileAt(x, y) {
+      return terrains[mapTiles[y * 10 + x]];
+    }
+
+    function distance(a, b) {
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
+    function matchup(attacker, defender) {
+      const data = troopChart[attacker.type];
+      if (data.strong === defender.type) return 3;
+      if (data.weak === defender.type) return -3;
+      return 0;
+    }
+
+    function isEscape(x, y) {
+      return escapeZones.some(tile => tile.x === x && tile.y === y);
+    }
+
+    function loadoutCost() {
+      return Object.values(loadout).reduce((sum, item) => sum + item.hire * troopChart[item.type].cost, 0);
+    }
+
+    function crownsLeft() {
+      return startingCrowns - loadoutCost();
+    }
+
+    function commanderPowerPreview(id) {
+      const item = loadout[id];
+      const troop = troopChart[item.type];
+      const path = classPaths[item.path];
+      const relic = relicStats[item.relic] || { atk: 0, def: 0, spell: 0, note: "" };
+      return {
+        atk: troop.atk + path.atk + relic.atk,
+        def: troop.def + path.def + relic.def,
+        spell: path.spell + relic.spell,
+        note: relic.note
+      };
+    }
+
+    function renderDeployment() {
+      deployCards.innerHTML = "";
+      const remaining = crownsLeft();
+      document.querySelector("#treasury").textContent = `Treasury: ${remaining} crowns`;
+      document.querySelector("#treasury").style.color = remaining < 0 ? "var(--red)" : "var(--muted)";
+      commanderDefs.forEach(def => {
+        const card = document.createElement("div");
+        card.className = "deploy-card";
+        const current = loadout[def.id];
+        const troop = troopChart[current.type];
+        const preview = commanderPowerPreview(def.id);
+        const fakeUnit = { ...def, side: "ally", type: current.type, troops: current.hire };
+        card.appendChild(unitSprite(fakeUnit));
+        const body = document.createElement("div");
+        body.innerHTML = `
+          <h3>${def.name}, ${def.title}</h3>
+          <p class="subtitle">${def.id === "cael" ? "The bonded heir of the Star Glaive." : "Loyal commander of the retreating royal host."}</p>
+          <div class="loadout">
+            <label>Troop Squad
+              <select data-loadout="${def.id}" data-kind="type">
+                ${def.troopChoices.map(type => `<option value="${type}" ${loadout[def.id].type === type ? "selected" : ""}>${troopChart[type].name}</option>`).join("")}
+              </select>
+            </label>
+            <label>Class Path
+              <select data-loadout="${def.id}" data-kind="path">
+                ${Object.entries(classPaths).map(([path, data]) => `<option value="${path}" ${current.path === path ? "selected" : ""}>${data.name}</option>`).join("")}
+              </select>
+            </label>
+            <label>Relic
+              <select data-loadout="${def.id}" data-kind="relic">
+                ${def.relicChoices.map(relic => `<option value="${relic}" ${loadout[def.id].relic === relic ? "selected" : ""}>${relic}</option>`).join("")}
+              </select>
+            </label>
+          </div>
+          <div class="hire-row">
+            <button data-hire="${def.id}" data-delta="-1" aria-label="Hire fewer troops for ${def.name}">-</button>
+            <div class="meter" style="--fill: ${(current.hire / troop.max) * 100}%"><span></span></div>
+            <button data-hire="${def.id}" data-delta="1" aria-label="Hire more troops for ${def.name}">+</button>
+            <strong>${current.hire}/${troop.max}</strong>
+          </div>
+          <p class="prep-note">${troop.cost} crowns per troop. Attack ${preview.atk}, Defense ${preview.def}, Spell ${preview.spell}. ${preview.note}</p>
+        `;
+        card.appendChild(body);
+        deployCards.appendChild(card);
+      });
+
+      deployCards.querySelectorAll("select").forEach(select => {
+        select.addEventListener("change", event => {
+          const id = event.target.dataset.loadout;
+          const kind = event.target.dataset.kind;
+          loadout[id][kind] = event.target.value;
+          if (kind === "type") {
+            loadout[id].hire = Math.min(loadout[id].hire, troopChart[event.target.value].max);
+          }
+          renderDeployment();
+        });
+      });
+
+      deployCards.querySelectorAll("[data-hire]").forEach(button => {
+        button.addEventListener("click", event => {
+          const id = event.target.dataset.hire;
+          const delta = Number(event.target.dataset.delta);
+          const troop = troopChart[loadout[id].type];
+          const next = Math.max(1, Math.min(troop.max, loadout[id].hire + delta));
+          loadout[id].hire = next;
+          renderDeployment();
+        });
+      });
+
+      document.querySelector("#startMission").disabled = remaining < 0;
+    }
+
+    function unitSprite(unit) {
+      const node = document.createElement("div");
+      node.className = `unit ${unit.side}`;
+      node.title = `${unit.name}: ${troopChart[unit.type].name}`;
+      node.innerHTML = `
+        <i class="banner"></i>
+        <i class="body"></i>
+        <i class="head"></i>
+        ${unit.id === "cael" ? '<i class="glaive"></i>' : '<i class="weapon"></i>'}
+        <i class="count">${unit.troops}</i>
+      `;
+      return node;
+    }
+
+    function renderMap() {
+      const selected = units.find(unit => unit.id === selectedId);
+      map.innerHTML = "";
+      for (let y = 0; y < 8; y += 1) {
+        for (let x = 0; x < 10; x += 1) {
+          const terrain = tileAt(x, y);
+          const tile = document.createElement("button");
+          tile.className = `tile ${terrain.bg}`;
+          tile.dataset.x = x;
+          tile.dataset.y = y;
+          tile.dataset.mark = terrain.mark;
+          tile.setAttribute("aria-label", `${terrain.name} ${x},${y}`);
+          if (isEscape(x, y)) tile.classList.add("escape");
+
+          const occupant = unitAt(x, y);
+          if (occupant) tile.appendChild(unitSprite(occupant));
+
+          if (selected && selected.x === x && selected.y === y) tile.classList.add("selected");
+          if (selected && selected.side === "ally" && playerPhase && !battleOver && !selected.moved && !occupant && distance(selected, { x, y }) <= 3) tile.classList.add("in-range");
+          if (selected && selected.side === "ally" && playerPhase && !battleOver && occupant && occupant.side === "enemy" && distance(selected, occupant) <= 1) tile.classList.add("can-attack");
+
+          tile.addEventListener("click", () => handleTile(x, y));
+          map.appendChild(tile);
+        }
+      }
+      renderSelected();
+    }
+
+    function renderSelected() {
+      const unit = units.find(item => item.id === selectedId);
+      if (!unit) {
+        document.querySelector("#selectedName").textContent = "Select a commander";
+        document.querySelector("#selectedDesc").textContent = "Click Prince Cael or an allied commander to inspect orders. Click enemies to compare troop matchups.";
+        ["troops","type","terrain","morale"].forEach(id => document.querySelector(`#${id}`).textContent = "-");
+        ["attackStat","defenseStat","relicStat"].forEach(id => document.querySelector(`#${id}`).textContent = "-");
+        return;
+      }
+
+      const terrain = tileAt(unit.x, unit.y);
+      const typeData = troopChart[unit.type];
+      const pathData = unit.path ? classPaths[unit.path] : { name: "Enemy", atk: 0, def: 0, morale: 0, spell: 0 };
+      const relicData = unit.relic ? relicStats[unit.relic] : { atk: 0, def: 0, spell: 0 };
+      document.querySelector("#selectedName").textContent = `${unit.name}, ${unit.title}`;
+      document.querySelector("#selectedDesc").textContent = unit.relic ? `${pathData.name} path. ${unit.relic}. ${unit.commander ? "Commander aura improves nearby troop morale." : ""}` : "Enemy commander of the Void Host.";
+      document.querySelector("#troops").textContent = `${unit.troops}/${unit.max}`;
+      document.querySelector("#type").textContent = troopChart[unit.type].name;
+      document.querySelector("#terrain").textContent = `${terrain.name} (${terrain.def >= 0 ? "+" : ""}${terrain.def})`;
+      document.querySelector("#morale").textContent = unit.morale + (pathData.morale || 0);
+      document.querySelector("#attackStat").textContent = typeData.atk + (pathData.atk || 0) + (relicData.atk || 0);
+      document.querySelector("#defenseStat").textContent = typeData.def + terrain.def + (pathData.def || 0) + (relicData.def || 0) + (unit.guarding ? 2 : 0);
+      document.querySelector("#relicStat").textContent = unit.relic || "None";
+
+      const allyReady = unit.side === "ally" && playerPhase && !unit.moved && !battleOver && missionStarted;
+      document.querySelector("#guard").disabled = !allyReady || unit.id !== "cael";
+      document.querySelector("#spell").disabled = !allyReady;
+      document.querySelector("#rally").disabled = !allyReady;
+      document.querySelector("#wait").disabled = !allyReady;
+
+      battleBg.className = `battle-bg ${terrain.bg}`;
+      document.querySelector("#battleReadout").textContent = terrain.name;
+    }
+
+    function handleTile(x, y) {
+      if (!missionStarted || battleOver) return;
+      const occupant = unitAt(x, y);
+      const selected = units.find(unit => unit.id === selectedId);
+
+      if (occupant) {
+        if (selected && selected.side === "ally" && occupant.side === "enemy" && playerPhase && !selected.moved && distance(selected, occupant) <= 1) {
+          attack(selected, occupant);
+          return;
+        }
+        selectedId = occupant.id;
+        renderMap();
+        return;
+      }
+
+      if (selected && selected.side === "ally" && playerPhase && !selected.moved && distance(selected, { x, y }) <= 3) {
+        selected.x = x;
+        selected.y = y;
+        if (!relicFound && x === 4 && y === 2) {
+          relicFound = true;
+          selected.morale += 1;
+          document.querySelector("#treasure").textContent = "Relic: Crystal Bracer";
+          addLog(`${selected.name} discovered the Crystal Bracer beneath the star gate.`);
+        }
+        selected.moved = true;
+        addLog(`${selected.name} advances into ${tileAt(x, y).name}.`);
+        renderMap();
+      }
+    }
+
+    function setupBattle(attacker, defender) {
+      const terrain = tileAt(defender.x, defender.y);
+      battleBg.className = `battle-bg ${terrain.bg}`;
+      document.querySelector("#leftLabel").textContent = attacker.name;
+      document.querySelector("#rightLabel").textContent = defender.name;
+      leftSquad.className = `squad left ${attacker.side}`;
+      rightSquad.className = `squad right ${defender.side}`;
+      leftSquad.innerHTML = "";
+      rightSquad.innerHTML = "";
+      const leftCommander = document.createElement("i");
+      leftCommander.className = `commander ${attacker.id === "cael" ? "cael" : ""}`;
+      const rightCommander = document.createElement("i");
+      rightCommander.className = `commander ${defender.id === "cael" ? "cael" : ""}`;
+      leftSquad.appendChild(leftCommander);
+      rightSquad.appendChild(rightCommander);
+      for (let i = 0; i < Math.min(attacker.troops, 5); i += 1) leftSquad.appendChild(document.createElement("i")).className = "soldier";
+      for (let i = 0; i < Math.min(defender.troops, 5); i += 1) rightSquad.appendChild(document.createElement("i")).className = "soldier";
+    }
+
+    function animateBattle(attacker, losses = { attacker: 0, defender: 0 }) {
+      leftSquad.classList.remove("charge");
+      rightSquad.classList.remove("charge");
+      impact.classList.remove("flash");
+      glaive.classList.remove("fly");
+      void leftSquad.offsetWidth;
+      leftSquad.classList.add("charge");
+      rightSquad.classList.add("charge");
+      if (attacker.id === "cael") glaive.classList.add("fly");
+      setTimeout(() => impact.classList.add("flash"), 450);
+      setTimeout(() => {
+        [...rightSquad.querySelectorAll(".soldier")].slice(0, Math.min(losses.defender, 5)).forEach(node => node.classList.add("fallen"));
+        [...leftSquad.querySelectorAll(".soldier")].slice(0, Math.min(losses.attacker, 5)).forEach(node => node.classList.add("fallen"));
+      }, 560);
+      setTimeout(() => {
+        leftSquad.classList.remove("charge");
+        rightSquad.classList.remove("charge");
+      }, 1050);
+    }
+
+    function attack(attacker, defender) {
+      setupBattle(attacker, defender);
+
+      const terrain = tileAt(defender.x, defender.y);
+      const edge = matchup(attacker, defender);
+      const attackerData = troopChart[attacker.type];
+      const defenderData = troopChart[defender.type];
+      const attackerPath = attacker.path ? classPaths[attacker.path] : { atk: 0, def: 0, morale: 0, spell: 0 };
+      const defenderPath = defender.path ? classPaths[defender.path] : { atk: 0, def: 0, morale: 0, spell: 0 };
+      const attackerRelic = attacker.relic ? relicStats[attacker.relic] : { atk: 0, def: 0, spell: 0 };
+      const defenderRelic = defender.relic ? relicStats[defender.relic] : { atk: 0, def: 0, spell: 0 };
+      const guardBonus = defender.guarding ? 2 : 0;
+      const base = Math.max(1, Math.round(attacker.troops / 3) + edge + Math.floor((attackerData.atk + attackerPath.atk + attackerRelic.atk) / 3) + Math.floor((attacker.morale + attackerPath.morale) / 4) - terrain.def - defenderPath.def - defenderRelic.def - guardBonus);
+      const retaliation = Math.max(0, Math.round(defender.troops / 4) - Math.max(0, edge) + Math.floor((defenderData.atk + defenderPath.atk + defenderRelic.atk) / 4) + Math.floor((defender.morale + defenderPath.morale) / 5) - (attacker.guarding ? 2 : 0));
+      animateBattle(attacker, { attacker: retaliation, defender: base });
+      defender.troops = Math.max(0, defender.troops - base);
+      attacker.troops = attacker.side === "ally" ? Math.max(0, attacker.troops - retaliation) : Math.max(0, attacker.troops - retaliation);
+      attacker.moved = true;
+      attacker.guarding = false;
+
+      const edgeText = edge > 0 ? "advantage" : edge < 0 ? "bad matchup" : "even matchup";
+      addLog(`${attacker.name} attacks ${defender.name}: ${base} damage, ${retaliation} lost in return, ${edgeText}.`);
+      if (defender.troops <= 0) addLog(`${defender.name} is routed from the field.`);
+      checkWinLoss();
+      renderMap();
+    }
+
+    function checkWinLoss() {
+      if (battleOver) return;
+      const enemies = units.filter(unit => unit.side === "enemy" && unit.troops > 0);
+      const cael = units.find(unit => unit.id === "cael");
+      const vark = units.find(unit => unit.id === "vark");
+      const escapedEnemy = enemies.find(unit => isEscape(unit.x, unit.y));
+      if (!vark || vark.troops <= 0) {
+        winMission("Lord Varkos is routed. The Void Host loses its nerve.");
+      } else if (!enemies.length) {
+        winMission("The Void Host breaks. Cael holds the star gate for another night.");
+      } else if (turn > maxTurns) {
+        winMission("The last refugee skiff clears the gate. Cael orders the retreat.");
+      } else if (escapedEnemy) {
+        loseMission(`${escapedEnemy.name} reaches the escape gate. The convoy is overrun.`);
+      } else if (!cael || cael.troops <= 0) {
+        loseMission("Prince Cael is routed. The royal retreat collapses.");
+      }
+    }
+
+    function winMission(text) {
+      battleOver = true;
+      document.querySelector("#objective").textContent = "Victory: gate held";
+      document.querySelector("#phase").textContent = "Mission Complete";
+      addLog(text);
+    }
+
+    function loseMission(text) {
+      battleOver = true;
+      document.querySelector("#objective").textContent = "Defeat";
+      document.querySelector("#phase").textContent = "Mission Failed";
+      addLog(text);
+    }
+
+    function endTurn() {
+      if (!missionStarted || battleOver || !playerPhase) return;
+      playerPhase = false;
+      document.querySelector("#phase").textContent = "Enemy Phase";
+      syncDynamicMusic("enemy");
+      addLog("The Void Host surges forward.");
+      setTimeout(enemyTurn, 350);
+    }
+
+    function enemyTurn() {
+      units.filter(unit => unit.side === "ally").forEach(unit => unit.guarding = false);
+      const enemies = units.filter(unit => unit.side === "enemy" && unit.troops > 0);
+      for (const enemy of enemies) {
+        if (battleOver) break;
+        const allies = units.filter(unit => unit.side === "ally" && unit.troops > 0);
+        allies.sort((a, b) => distance(enemy, a) - distance(enemy, b));
+        const target = allies[0];
+        if (!target) continue;
+        if (distance(enemy, target) <= 1) {
+          attack(enemy, target);
+        } else {
+          const pressureGate = turn >= 3 && enemy.id !== "vark";
+          const goal = pressureGate ? nearestEscape(enemy) : target;
+          const dx = Math.sign(goal.x - enemy.x);
+          const dy = Math.sign(goal.y - enemy.y);
+          const horizontal = Math.abs(goal.x - enemy.x) > Math.abs(goal.y - enemy.y);
+          const next = horizontal ? { x: enemy.x + dx, y: enemy.y } : { x: enemy.x, y: enemy.y + dy };
+          if (next.x >= 0 && next.x < 10 && next.y >= 0 && next.y < 8 && !unitAt(next.x, next.y)) {
+            enemy.x = next.x;
+            enemy.y = next.y;
+            addLog(`${enemy.name} moves through ${tileAt(enemy.x, enemy.y).name}.`);
+          }
+        }
+        checkWinLoss();
+      }
+      if (battleOver) {
+        renderMap();
+        return;
+      }
+      turn += 1;
+      units.forEach(unit => unit.moved = false);
+      units.filter(unit => unit.side === "enemy").forEach(unit => unit.guarding = false);
+      playerPhase = true;
+      document.querySelector("#phase").textContent = "Player Phase";
+      syncDynamicMusic("player");
+      document.querySelector("#turnReadout").textContent = `Turn ${Math.min(turn, maxTurns)}/${maxTurns}`;
+      addLog("Your commanders await orders.");
+      checkWinLoss();
+      renderMap();
+    }
+
+    function nearestEscape(unit) {
+      return [...escapeZones].sort((a, b) => distance(unit, a) - distance(unit, b))[0];
+    }
+
+    function selectedAllyReady() {
+      const unit = units.find(item => item.id === selectedId);
+      return unit && unit.side === "ally" && playerPhase && !unit.moved ? unit : null;
+    }
+
+    document.querySelector("#endTurn").addEventListener("click", endTurn);
+    document.querySelector("#reset").addEventListener("click", () => reset(false));
+    document.querySelector("#guard").addEventListener("click", () => {
+      const unit = selectedAllyReady();
+      if (!unit || unit.id !== "cael") return;
+      unit.morale += 1;
+      unit.guarding = true;
+      unit.moved = true;
+      setupBattle(unit, units.find(item => item.side === "enemy" && item.troops > 0) || unit);
+      glaive.classList.add("fly");
+      addLog("Cael locks the Star Glaive to his forearm, raising a bright shield for the line.");
+      renderMap();
+    });
+
+    document.querySelector("#spell").addEventListener("click", () => {
+      const unit = selectedAllyReady();
+      if (!unit) return;
+      const enemies = units.filter(item => item.side === "enemy" && item.troops > 0 && distance(unit, item) <= 3);
+      if (!enemies.length) {
+        addLog("No enemy is close enough for Solar Lance.");
+        return;
+      }
+      enemies.sort((a, b) => a.troops - b.troops);
+      const target = enemies[0];
+      const path = unit.path ? classPaths[unit.path] : { spell: 0 };
+      const relic = unit.relic ? relicStats[unit.relic] : { spell: 0 };
+      const spellDamage = 3 + (path.spell || 0) + (relic.spell || 0);
+      target.troops = Math.max(0, target.troops - spellDamage);
+      unit.moved = true;
+      setupBattle(unit, target);
+      impact.classList.add("flash");
+      addLog(`${unit.name} casts Solar Lance at ${target.name}, burning away ${spellDamage} troops.`);
+      checkWinLoss();
+      renderMap();
+    });
+
+    document.querySelector("#rally").addEventListener("click", () => {
+      const unit = selectedAllyReady();
+      if (!unit) return;
+      units.filter(item => item.side === "ally" && distance(unit, item) <= 2).forEach(item => {
+        item.morale = Math.min(10, item.morale + 1);
+      });
+      unit.moved = true;
+      addLog(`${unit.name} rallies nearby banners. Morale rises.`);
+      renderMap();
+    });
+
+    document.querySelector("#wait").addEventListener("click", () => {
+      const unit = selectedAllyReady();
+      if (!unit) return;
+      unit.guarding = true;
+      unit.moved = true;
+      addLog(`${unit.name} holds position.`);
+      renderMap();
+    });
+
+    function startMission() {
+      if (crownsLeft() < 0) {
+        addLog("The War Council is over budget. Reduce troop hires before starting the mission.");
+        return;
+      }
+      missionStarted = true;
+      deployment.classList.add("hidden");
+      syncDynamicMusic("player");
+      reset(false);
+    }
+
+    function showDeployment() {
+      missionStarted = false;
+      deployment.classList.remove("hidden");
+      syncDynamicMusic("player");
+      renderDeployment();
+      reset(true);
+    }
+
+    function reset(showBriefing = false) {
+      units = buildInitialUnits();
+      selectedId = "cael";
+      playerPhase = true;
+      relicFound = false;
+      battleOver = false;
+      turn = 1;
+      log.innerHTML = "";
+      document.querySelector("#phase").textContent = "Player Phase";
+      syncDynamicMusic(playerPhase ? "player" : "enemy");
+      document.querySelector("#objective").textContent = "Hold the star gate";
+      document.querySelector("#turnReadout").textContent = `Turn ${turn}/${maxTurns}`;
+      document.querySelector("#treasure").textContent = "Relic: undiscovered";
+      if (showBriefing) document.querySelector("#phase").textContent = "Deployment";
+      addLog(`${VERSION}.`);
+      addLog(`War Council committed ${loadoutCost()} crowns. Reserve treasury: ${crownsLeft()} crowns.`);
+      addLog("The capital has fallen. Prince Cael must hold the star gate for six turns while the royal convoy escapes.");
+      addLog("Rock-paper-scissors: knights beat infantry, pikes beat beasts, archers beat pikes, infantry beats archers, beasts beat archers.");
+      renderMap();
+    }
+
+    document.querySelector("#startMission").addEventListener("click", startMission);
+    document.querySelector("#deploymentReset").addEventListener("click", showDeployment);
+    document.querySelector("#musicToggle").addEventListener("click", () => {
+      musicEnabled = !musicEnabled;
+      if (!music.src) setTrack(currentTrackIndex, false);
+      if (musicEnabled) {
+        playMusic();
+      } else {
+        music.pause();
+      }
+      updateMusicStatus();
+    });
+    document.querySelector("#nextTrack").addEventListener("click", () => setTrack(currentTrackIndex + 1));
+    document.querySelector("#trackSelect").addEventListener("change", event => setTrack(Number(event.target.value)));
+    document.querySelector("#musicMode").addEventListener("change", () => syncDynamicMusic(playerPhase ? "player" : "enemy"));
+    document.querySelector("#musicVolume").addEventListener("input", event => {
+      music.volume = Number(event.target.value) / 100;
+    });
+    music.addEventListener("ended", () => setTrack(currentTrackIndex + 1));
+
+    populateTrackSelect();
+    setTrack(0, false);
+    renderDeployment();
+    reset(true);
+  </script>
+</body>
+</html>
