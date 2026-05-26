@@ -773,6 +773,121 @@
       text-shadow: 0 2px 0 #000;
     }
 
+
+
+    .unit.unit-knights .body, .squad .soldier.knights { border-top-color: var(--gold); }
+    .unit.unit-knights .weapon { width: 5px; height: 29px; background: linear-gradient(#fff4ba, #d6d2c3); box-shadow: 0 0 8px rgba(230,187,98,0.45); }
+    .unit.unit-pikes .weapon { right: -4px; bottom: 7px; height: 38px; transform: rotate(-58deg); background: #f1e5c2; }
+    .unit.unit-pikes .body { clip-path: polygon(50% 0, 80% 16%, 100% 100%, 0 100%, 20% 16%); }
+    .unit.unit-archers .weapon { right: -2px; bottom: 9px; width: 16px; height: 26px; border: 3px solid #e9dbc0; border-left: 0; background: transparent; border-radius: 0 50% 50% 0; transform: rotate(-8deg); }
+    .unit.unit-archers .body { width: 20px; height: 24px; clip-path: polygon(50% 0, 76% 24%, 92% 100%, 8% 100%, 24% 24%); }
+    .unit.unit-infantry .body { width: 26px; clip-path: polygon(50% 0, 84% 24%, 86% 100%, 14% 100%, 16% 24%); }
+    .unit.unit-beasts .head { left: 60%; top: 8px; width: 15px; height: 12px; background: var(--unit2); border-radius: 55% 45% 40% 40%; }
+    .unit.unit-beasts .body { bottom: 7px; width: 32px; height: 22px; border-radius: 45% 25% 35% 25%; clip-path: polygon(8% 35%, 38% 0, 88% 14%, 100% 58%, 80% 100%, 18% 82%); }
+    .unit.unit-beasts .weapon { right: -3px; bottom: 16px; width: 17px; height: 5px; background: var(--unit2); transform: rotate(24deg); }
+    .unit.commander-token::before {
+      content: "★";
+      position: absolute;
+      left: -6px;
+      top: -7px;
+      z-index: 5;
+      color: var(--gold);
+      font-size: 14px;
+      text-shadow: 0 2px 0 #000, 0 0 8px rgba(230,187,98,0.8);
+    }
+
+    .commander.sera { background: linear-gradient(180deg, #87d6e4, #335a71); }
+    .commander.sera::after {
+      content: "";
+      position: absolute;
+      right: -13px;
+      top: 15px;
+      width: 20px;
+      height: 31px;
+      border: 4px solid #d6d2c3;
+      border-left: 0;
+      border-radius: 0 50% 50% 0;
+      transform: rotate(-8deg);
+      box-shadow: 0 0 10px rgba(128,215,219,0.55);
+    }
+    .commander.maelor { background: linear-gradient(180deg, #e6bb62, #7f5634); }
+    .commander.maelor::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: 9px;
+      width: 5px;
+      height: 39px;
+      background: #fff0b3;
+      transform: rotate(-22deg);
+      box-shadow: 0 0 10px rgba(230,187,98,0.55);
+    }
+    .commander.vark::after {
+      content: "";
+      position: absolute;
+      right: -12px;
+      top: -2px;
+      width: 5px;
+      height: 55px;
+      background: #d6d2c3;
+      transform: rotate(-58deg);
+      box-shadow: 15px -8px 0 -1px #9d4451;
+    }
+
+    .combat-preview {
+      margin-top: 8px;
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+    }
+    .forecast-card {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.18);
+    }
+    .forecast-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .forecast-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--gold);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .forecast-grid span {
+      padding: 7px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      background: rgba(0,0,0,0.14);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .forecast-grid strong {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+    }
+    .tile.preview-target { box-shadow: inset 0 0 0 4px rgba(230,187,98,0.65), 0 0 16px rgba(230,187,98,0.35); }
+
     @media (max-width: 940px) {
       :root { --tile: min(9.2vw, 48px); }
       .app { grid-template-columns: 1fr; padding: 10px; }
@@ -792,7 +907,7 @@
     <header>
       <div>
         <h1>Voidsong</h1>
-        <p class="subtitle">v0.26.05.23.1431 - Battle Theater. A space-fantasy tactical RPG prototype with army preparation, hired troop squads, class paths, relics, terrain, spells, cinematic troop clashes, phase-aware music, and visible enemy turns.</p>
+        <p class="subtitle">v0.26.05.25.2135 - Battle Theater Identity Pass. A space-fantasy tactical RPG prototype with clearer troop silhouettes, commander identity, combat forecasts, terrain-aware battle staging, phase-aware music, and visible enemy turns.</p>
       </div>
       <div class="badge" id="phase">Player Phase</div>
     </header>
@@ -884,6 +999,10 @@
           <button id="wait">Wait</button>
         </div>
       </section>
+      <section class="panel forecast-panel">
+        <h3>Combat Forecast</h3>
+        <div id="combatPreview" class="combat-preview">Select a ready allied commander, then click or hover an adjacent enemy to preview the clash.</div>
+      </section>
       <section class="log" id="log" aria-live="polite"></section>
     </aside>
 
@@ -910,7 +1029,7 @@
   </main>
 
   <script>
-    const VERSION = "v0.26.05.23.1431 - Battle Theater";
+    const VERSION = "v0.26.05.25.2135 - Battle Theater Identity Pass";
 
     const heroicTracks = [
       ["Phase Runner Neon", "assets/music/Soundtrack/genesis_rock_treatment_mp3_320kbps_set/01_phase_runner_neon_genesis_rock_hifi.mp3"],
@@ -1285,7 +1404,7 @@
 
     function unitSprite(unit) {
       const node = document.createElement("div");
-      node.className = `unit ${unit.side}`;
+      node.className = `unit ${unit.side} unit-${unit.type} ${unit.commander ? "commander-token" : ""}`;
       node.title = `${unit.name}: ${troopChart[unit.type].name}`;
       node.innerHTML = `
         <i class="banner"></i>
@@ -1317,7 +1436,10 @@
           if (selected && selected.x === x && selected.y === y) tile.classList.add("selected");
           if (occupant && occupant.id === activeEnemyId) tile.classList.add("enemy-active");
           if (selected && selected.side === "ally" && playerPhase && !battleOver && !selected.moved && !occupant && distance(selected, { x, y }) <= 3) tile.classList.add("in-range");
-          if (selected && selected.side === "ally" && playerPhase && !battleOver && occupant && occupant.side === "enemy" && distance(selected, occupant) <= 1) tile.classList.add("can-attack");
+          if (selected && selected.side === "ally" && playerPhase && !battleOver && occupant && occupant.side === "enemy" && distance(selected, occupant) <= 1) {
+            tile.classList.add("can-attack");
+            tile.addEventListener("mouseenter", () => renderCombatPreview(selected, occupant));
+          }
 
           tile.addEventListener("click", () => handleTile(x, y));
           map.appendChild(tile);
@@ -1355,6 +1477,13 @@
       document.querySelector("#spell").disabled = !allyReady;
       document.querySelector("#rally").disabled = !allyReady;
       document.querySelector("#wait").disabled = !allyReady;
+
+      if (allyReady) {
+        const adjacentEnemy = units.find(item => item.side === "enemy" && item.troops > 0 && distance(unit, item) <= 1);
+        renderCombatPreview(unit, adjacentEnemy);
+      } else {
+        renderCombatPreview(null, null);
+      }
 
       battleBg.className = `battle-bg ${terrain.bg}`;
       document.querySelector("#battleReadout").textContent = terrain.name;
@@ -1435,9 +1564,9 @@
       damagePop.classList.remove("show");
       battleCaption.textContent = `${attacker.name} ${battleVerb(attacker)}.`;
       const leftCommander = document.createElement("i");
-      leftCommander.className = `commander ${attacker.id === "cael" ? "cael" : ""}`;
+      leftCommander.className = `commander ${attacker.id === "cael" ? "cael" : attacker.id === "sera" ? "sera" : attacker.id === "maelor" ? "maelor" : attacker.id === "vark" ? "vark" : ""}`;
       const rightCommander = document.createElement("i");
-      rightCommander.className = `commander ${defender.id === "cael" ? "cael" : ""}`;
+      rightCommander.className = `commander ${defender.id === "cael" ? "cael" : defender.id === "sera" ? "sera" : defender.id === "maelor" ? "maelor" : defender.id === "vark" ? "vark" : ""}`;
       leftSquad.appendChild(leftCommander);
       rightSquad.appendChild(rightCommander);
       addBattleSoldiers(leftSquad, attacker);
@@ -1476,9 +1605,7 @@
       }, 1050);
     }
 
-    function attack(attacker, defender) {
-      setupBattle(attacker, defender);
-
+    function calculateCombat(attacker, defender) {
       const terrain = tileAt(defender.x, defender.y);
       const edge = matchup(attacker, defender);
       const attackerData = troopChart[attacker.type];
@@ -1490,6 +1617,39 @@
       const guardBonus = defender.guarding ? 2 : 0;
       const base = Math.max(1, Math.round(attacker.troops / 3) + edge + Math.floor((attackerData.atk + attackerPath.atk + attackerRelic.atk) / 3) + Math.floor((attacker.morale + attackerPath.morale) / 4) - terrain.def - defenderPath.def - defenderRelic.def - guardBonus);
       const retaliation = Math.max(0, Math.round(defender.troops / 4) - Math.max(0, edge) + Math.floor((defenderData.atk + defenderPath.atk + defenderRelic.atk) / 4) + Math.floor((defender.morale + defenderPath.morale) / 5) - (attacker.guarding ? 2 : 0));
+      const edgeText = edge > 0 ? "Advantage" : edge < 0 ? "Bad Matchup" : "Even Matchup";
+      return { terrain, edge, edgeText, base, retaliation };
+    }
+
+    function renderCombatPreview(attacker, defender) {
+      const node = document.querySelector("#combatPreview");
+      if (!node) return;
+      if (!attacker || !defender || attacker.side !== "ally" || defender.side !== "enemy") {
+        node.textContent = "Select a ready allied commander, then click or hover an adjacent enemy to preview the clash.";
+        return;
+      }
+      const forecast = calculateCombat(attacker, defender);
+      const terrainSign = forecast.terrain.def >= 0 ? "+" : "";
+      node.innerHTML = `
+        <div class="forecast-card">
+          <div class="forecast-title">${attacker.name} → ${defender.name}<span class="forecast-chip">${forecast.edgeText}</span></div>
+          <div class="forecast-grid">
+            <span>Enemy Losses<strong>${forecast.base}</strong></span>
+            <span>Return Losses<strong>${forecast.retaliation}</strong></span>
+            <span>Terrain<strong>${terrainSign}${forecast.terrain.def}</strong></span>
+          </div>
+          <p>${troopChart[attacker.type].name} vs ${troopChart[defender.type].name} on ${forecast.terrain.name}. ${forecast.edge > 0 ? "The matchup favors your attack." : forecast.edge < 0 ? "This is risky unless you soften the target first." : "A fair clash; terrain and morale will decide it."}</p>
+        </div>`;
+    }
+
+    function attack(attacker, defender) {
+      setupBattle(attacker, defender);
+
+      const forecast = calculateCombat(attacker, defender);
+      const terrain = forecast.terrain;
+      const edge = forecast.edge;
+      const base = forecast.base;
+      const retaliation = forecast.retaliation;
       animateBattle(attacker, { attacker: retaliation, defender: base });
       defender.troops = Math.max(0, defender.troops - base);
       attacker.troops = attacker.side === "ally" ? Math.max(0, attacker.troops - retaliation) : Math.max(0, attacker.troops - retaliation);
